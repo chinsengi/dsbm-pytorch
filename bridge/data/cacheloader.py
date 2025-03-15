@@ -1,5 +1,6 @@
 import os, time, shutil
 import glob
+from loguru import logger
 import numpy as np
 from numpy.lib.format import open_memmap
 import torch
@@ -156,7 +157,7 @@ def DBDSB_CacheLoader(sample_direction, sample_fn, init_dl, final_dl, num_batche
                 loaded = False
                 while not loaded:
                     if not os.path.isfile(temp_cache_filepath_b_dist):
-                        print(f"Index {ipf.accelerator.process_index} did not find temp cache file {b_dist}, retrying in 5 seconds")
+                        logger.info(f"Index {ipf.accelerator.process_index} did not find temp cache file {b_dist}, retrying in 5 seconds")
                         time.sleep(5)
                     else:
                         try:
@@ -164,7 +165,7 @@ def DBDSB_CacheLoader(sample_direction, sample_fn, init_dl, final_dl, num_batche
                             batch_x0, batch_x1 = batch_x0.to(ipf.device), batch_x1.to(ipf.device)
                             loaded = True
                         except:
-                            print(f"Index {ipf.accelerator.process_index} failed to load cache file {b_dist}, retrying in 5 seconds")
+                            logger.info(f"Index {ipf.accelerator.process_index} failed to load cache file {b_dist}, retrying in 5 seconds")
                             time.sleep(5)
 
                 assert len(batch_x0) == len(batch_x1) == cache_batch_size_dist
@@ -174,14 +175,14 @@ def DBDSB_CacheLoader(sample_direction, sample_fn, init_dl, final_dl, num_batche
                     loaded = False
                     while not loaded:
                         if not os.path.isfile(temp_cache_y_filepath_b_dist):
-                            print(f"Index {ipf.accelerator.process_index} did not find temp cache file {b_dist}_y, retrying in 5 seconds")
+                            logger.info(f"Index {ipf.accelerator.process_index} did not find temp cache file {b_dist}_y, retrying in 5 seconds")
                             time.sleep(5)
                         else:
                             try:
                                 batch_y = torch.load(temp_cache_y_filepath_b_dist)[0]
                                 loaded = True
                             except:
-                                print(f"Index {ipf.accelerator.process_index} failed to load cache file {b_dist}_y, retrying in 5 seconds")
+                                logger.info(f"Index {ipf.accelerator.process_index} failed to load cache file {b_dist}_y, retrying in 5 seconds")
                                 time.sleep(5)
                     assert len(batch_y) == cache_batch_size_dist
                 
@@ -213,28 +214,28 @@ def DBDSB_CacheLoader(sample_direction, sample_fn, init_dl, final_dl, num_batche
     loaded = False
     while not loaded:
         if not os.path.isfile(cache_filepath_npy):
-            print("Index", ipf.accelerator.process_index, "did not find cache file, retrying in 5 seconds")
+            logger.info("Index", ipf.accelerator.process_index, "did not find cache file, retrying in 5 seconds")
             time.sleep(5)
         else:
             try:
                 fp = np.load(cache_filepath_npy, mmap_mode='r')
                 loaded = True
             except:
-                print("Index", ipf.accelerator.process_index, "failed to load cache file, retrying in 5 seconds")
+                logger.info("Index", ipf.accelerator.process_index, "failed to load cache file, retrying in 5 seconds")
                 time.sleep(5)
     
     if ipf.cdsb:
         loaded = False
         while not loaded:
             if not os.path.isfile(cache_y_filepath_npy):
-                print("Index", ipf.accelerator.process_index, "did not find cache_y file, retrying in 5 seconds")
+                logger.info("Index", ipf.accelerator.process_index, "did not find cache_y file, retrying in 5 seconds")
                 time.sleep(5)
             else:
                 try:
                     fp_y = np.load(cache_y_filepath_npy, mmap_mode='r')
                     loaded = True
                 except:
-                    print("Index", ipf.accelerator.process_index, "failed to load cache_y file, retrying in 5 seconds")
+                    logger.info("Index", ipf.accelerator.process_index, "failed to load cache_y file, retrying in 5 seconds")
                     time.sleep(5)
 
     ipf.accelerator.wait_for_everyone() 

@@ -15,6 +15,7 @@ from typing import List, Optional, Tuple
 import hydra
 import pytorch_lightning as pl
 from omegaconf import DictConfig
+from loguru import logger
 
 
 device = 'cpu'
@@ -484,7 +485,7 @@ def draw_plot(sample_fn, z0, z1, N=None):
 def train(cfg: DictConfig):
   # set seed for random number generators in pytorch, numpy and python.random
   if cfg.get("seed"):
-    print(f"Seed: <{cfg.seed}>")
+    logger.info(f"Seed: <{cfg.seed}>")
     pl.seed_everything(cfg.seed, workers=True)
 
   a = cfg.a
@@ -524,23 +525,23 @@ def train(cfg: DictConfig):
                 net_bwd=net_fn().to(device), 
                 num_steps=num_steps, sig=sigma)
     train_fn = train_dsb_ipf
-    print(f"Number of parameters: <{sum(p.numel() for p in model.net_fwd.parameters() if p.requires_grad)}>")
+    logger.info(f"Number of parameters: <{sum(p.numel() for p in model.net_fwd.parameters() if p.requires_grad)}>")
   elif cfg.model_name == "dsbm":
     model = DSBM(net_fwd=net_fn().to(device), 
                   net_bwd=net_fn().to(device), 
                   num_steps=num_steps, sig=sigma, first_coupling=cfg.first_coupling)
     train_fn = train_dsbm
-    print(f"Number of parameters: <{sum(p.numel() for p in model.net_fwd.parameters() if p.requires_grad)}>")
+    logger.info(f"Number of parameters: <{sum(p.numel() for p in model.net_fwd.parameters() if p.requires_grad)}>")
   elif cfg.model_name == "sbcfm":
     model = SBCFM(net=net_fn().to(device), 
                   num_steps=num_steps, sig=sigma)
     train_fn = train_flow_model
-    print(f"Number of parameters: <{sum(p.numel() for p in model.net.parameters() if p.requires_grad)}>")
+    logger.info(f"Number of parameters: <{sum(p.numel() for p in model.net.parameters() if p.requires_grad)}>")
   elif cfg.model_name == "rectifiedflow":
     model = RectifiedFlow(net=net_fn().to(device), 
                           num_steps=num_steps, sig=None)
     train_fn = train_flow_model
-    print(f"Number of parameters: <{sum(p.numel() for p in model.net.parameters() if p.requires_grad)}>")
+    logger.info(f"Number of parameters: <{sum(p.numel() for p in model.net.parameters() if p.requires_grad)}>")
   else:
     raise ValueError("Wrong model_name!")
 
@@ -553,7 +554,7 @@ def train(cfg: DictConfig):
   # assert outer_iters % len(cfg.fb_sequence) == 0
   while it <= outer_iters:
     for fb in cfg.fb_sequence:
-      print(f"Iteration {it}/{outer_iters} {fb}")
+      logger.info(f"Iteration {it}/{outer_iters} {fb}")
       first_it = (it == 1)
       if first_it:
         prev_model = None
@@ -653,7 +654,7 @@ def train(cfg: DictConfig):
   return {}, {}
 
 
-@hydra.main(config_path="conf", config_name="gaussian.yaml")
+@hydra.main(config_path="conf", config_name="gaussian.yaml", version_base=None)
 def main(cfg: DictConfig) -> Optional[float]:
     # train the model
     train(cfg)

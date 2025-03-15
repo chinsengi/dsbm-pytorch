@@ -32,8 +32,9 @@ From: nvidia/cuda:11.7.0-cudnn8-devel-ubuntu18.04
     conda install scipy pandas scikit-learn tqdm matplotlib seaborn python-lmdb h5py
     conda install -c conda-forge pytorch-lightning hydra-core wandb gdown p7zip pot ninja
     conda install -c conda-forge accelerate
-    conda install -c conda-forge torch-fidelity lpips torchdiffeq
-    conda install -c conda-forge jupyterlab
+    conda install -c conda-forge torch-fidelity
+    conda install -c conda-forge torchdiffeq
+    conda install -c conda-forge jupyterlab 
     pip install slurm-gpustat hydra-submitit-launcher
 
     echo ". /opt/miniconda3/etc/profile.d/conda.sh" >> $SINGULARITY_ENVIRONMENT

@@ -3,6 +3,7 @@
 Many functions are ported from https://github.com/NVlabs/stylegan2.
 """
 
+from loguru import logger
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
@@ -10,7 +11,7 @@ import numpy as np
 try:
     from .op import upfirdn2d
 except:
-    print('Failed to import upfirdn2d')
+    logger.warning('Failed to import upfirdn2d')
 
 
 # Function ported from StyleGAN2

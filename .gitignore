@@ -141,3 +141,5 @@ slurm*.sh
 bridge.sif
 
 sylabs-token
+*.png
+*.pt

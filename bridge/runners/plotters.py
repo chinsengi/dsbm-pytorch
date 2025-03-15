@@ -1,5 +1,6 @@
 import time
 import os, sys
+from loguru import logger
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
@@ -72,7 +73,7 @@ class Plotter(object):
                                          mean_final=mean_final, var_final=var_final)
 
             if use_cache and not self.ipf.cdsb:
-                print("Using cached data for training set evaluation")
+                logger.info("Using cached data for training set evaluation")
                 fp = np.load(cache_filepath_npy[0], mmap_mode="r")
                 all_x = torch.from_numpy(fp[:self.ipf.test_npar])
                 if fb == 'f':

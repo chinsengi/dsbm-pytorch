@@ -4,6 +4,7 @@ from collections import OrderedDict
 from functools import partial
 
 import hydra
+from loguru import logger
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -129,7 +130,7 @@ class IPF_DBDSB:
         if self.args.get('checkpoint_run', False):
             self.resume, self.checkpoint_it, self.checkpoint_pass, self.step = \
                 True, self.args.checkpoint_it, self.args.checkpoint_pass, self.args.checkpoint_iter
-            print(f"Resuming training at iter {self.checkpoint_it} {self.checkpoint_pass} step {self.step}")
+            logger.info(f"Resuming training at iter {self.checkpoint_it} {self.checkpoint_pass} step {self.step}")
 
             self.checkpoint_b = hydra.utils.to_absolute_path(self.args.checkpoint_b)
             self.sample_checkpoint_b = hydra.utils.to_absolute_path(self.args.sample_checkpoint_b)
@@ -155,7 +156,7 @@ class IPF_DBDSB:
                     self.checkpoint_pass, self.checkpoint_it = self.compute_prev_it(self.checkpoint_pass, self.checkpoint_it)
                     self.step = self.compute_max_iter(self.checkpoint_pass, self.checkpoint_it) + 1
 
-                print(f"Resuming training at iter {self.checkpoint_it} {self.checkpoint_pass} step {self.step}")
+                logger.info(f"Resuming training at iter {self.checkpoint_it} {self.checkpoint_pass} step {self.step}")
                 self.checkpoint_b, self.sample_checkpoint_b, self.optimizer_checkpoint_b = [os.path.join(self.ckpt_dir_load, f"{ckpt_prefix}_{ckpt_b_suffix}.ckpt") for ckpt_prefix in self.ckpt_prefixes[:3]]
                 if ckpt_f_suffix is not None:
                     self.resume_f = True

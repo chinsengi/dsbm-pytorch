@@ -2,6 +2,7 @@ import math
 from functools import partial
 from typing import Optional
 
+from loguru import logger
 import numpy as np
 import ot as pot
 import torch
@@ -43,10 +44,10 @@ class OTPlanSampler:
             M = M / M.max()
         p = self.ot_fn(a, b, M.detach().cpu().numpy())
         if not np.all(np.isfinite(p)):
-            print("ERROR: p is not finite")
-            print(p)
-            print("Cost mean, max", M.mean(), M.max())
-            print(x0, x1)
+            logger.info("ERROR: p is not finite")
+            logger.info(p)
+            logger.info("Cost mean, max", M.mean(), M.max())
+            logger.info(x0, x1)
         return p
 
     def sample_map(self, pi, batch_size):
