@@ -181,6 +181,9 @@ def get_datasets(args):
 
     # MNIST DATASET
     if dataset_tag == DATASET_MNIST:
+        '''
+        For MNIST, we use the original dataset with 10 classes.
+        '''
         # data_tag = args.data.dataset
         root = os.path.join(data_dir, 'mnist')
         load = args.load
@@ -326,7 +329,6 @@ NOLOG_TAG = 'NONE'
 
 def get_logger(args, name):
     logger_tag = getattr(args, LOGGER)
-
     if logger_tag == CSV_TAG:
         kwargs = {'save_dir': args.CSV_log_dir, 'name': name, 'flush_logs_every_n_steps': 1}
         return CSVLogger(**kwargs)

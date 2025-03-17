@@ -143,3 +143,7 @@ bridge.sif
 sylabs-token
 *.png
 *.pt
+checkpoints/*
+gif/*
+*.wandb
+wandb/

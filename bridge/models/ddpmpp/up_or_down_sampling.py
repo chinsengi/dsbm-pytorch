@@ -10,8 +10,8 @@ import torch.nn.functional as F
 import numpy as np
 try:
     from .op import upfirdn2d
-except:
-    logger.warning('Failed to import upfirdn2d')
+except Exception as e:
+    logger.warning(f'Failed to import upfirdn2d, {e}')
 
 
 # Function ported from StyleGAN2
